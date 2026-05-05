@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-multipart
+motor
+motor-asyncio
+pymongo
+opencv-python
+tensorflow-cpu
+numpy
+pillow
+pydantic
+python-dotenv
+aiofiles
+google-generativeai

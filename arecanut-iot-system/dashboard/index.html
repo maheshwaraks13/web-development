@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arecanut IoT Monitoring - Premium Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Modals and New UI Elements */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(5px);
+            z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--bg-card); padding: 2rem; border-radius: 1.5rem;
+            border: 1px solid var(--glass-border); width: 100%; max-width: 400px;
+        }
+        .modal-content h2 { margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted); }
+        .form-group input { 
+            width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--glass-border);
+            background: rgba(15, 23, 42, 0.5); color: var(--text-main);
+        }
+        .btn {
+            width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: none;
+            background: var(--primary); color: white; font-weight: 600; cursor: pointer;
+            transition: background 0.2s; margin-top: 1rem;
+        }
+        .btn:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: rgba(79, 70, 229, 0.1); }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        .toggle-link { color: var(--primary); cursor: pointer; font-size: 0.875rem; margin-top: 1rem; display: block; text-align: center; }
+        .hidden { display: none !important; }
+        
+        .upload-section { margin-top: 1rem; display: flex; gap: 0.5rem; }
+        .upload-section input[type="file"] { display: none; }
+        .upload-label {
+            padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px dashed var(--glass-border);
+            cursor: pointer; font-size: 0.875rem; color: var(--text-muted); flex-grow: 1; text-align: center;
+            transition: all 0.2s;
+        }
+        .upload-label:hover { border-color: var(--primary); color: var(--text-main); }
+        
+        .history-gallery { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
+        .history-item { 
+            min-width: 120px; height: 90px; border-radius: 0.5rem; overflow: hidden; 
+            border: 1px solid var(--glass-border); position: relative;
+        }
+        .history-item img { width: 100%; height: 100%; object-fit: cover; }
+        .history-item .badge { position: absolute; bottom: 0.25rem; right: 0.25rem; font-size: 0.6rem; padding: 0.2rem 0.4rem; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo">ARECAMONITOR <span style="font-weight:300; color:var(--text-muted)">IoT</span></div>
+            <div class="header-actions">
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span id="system-status">System Active</span>
+                </div>
+
+            </div>
+        </header>
+
+        <div class="grid" id="main-content" style="display: grid;">
+            <!-- Metrics Row -->
+            <div class="card col-4 metric-card">
+                <div class="metric-label">Temperature</div>
+                <div class="metric-value" id="temp-val">--<span class="metric-unit">°C</span></div>
+                <div id="temp-status" style="font-size:0.8rem">Optimal range</div>
+            </div>
+            <div class="card col-4 metric-card">
+                <div class="metric-label">Humidity</div>
+                <div class="metric-value" id="hum-val">--<span class="metric-unit">%</span></div>
+                <div id="hum-status" style="font-size:0.8rem">Monitoring air quality</div>
+            </div>
+            <div class="card col-4 metric-card">
+                <div class="metric-label">Soil Moisture</div>
+                <div class="metric-value" id="moist-val">--<span class="metric-unit">%</span></div>
+                <div id="moist-status" style="font-size:0.8rem">Root hydration level</div>
+            </div>
+
+            <!-- Image and AI Row -->
+            <div class="card col-8">
+                <div style="display:flex; justify-content:space-between; margin-bottom:1rem">
+                    <h3 style="font-size:1.1rem; font-weight:700">Latest Leaf Capture</h3>
+                    <span id="capture-time" style="color:var(--text-muted); font-size:0.875rem">Last updated: --</span>
+                </div>
+                <div class="image-preview">
+                    <img id="leaf-img" src="https://via.placeholder.com/800x600?text=No+Image+Captured" alt="Arecanut Leaf">
+                    <div class="prediction-overlay" id="pred-badge-overlay">Initializing AI...</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <div style="display:flex; gap:1rem; align-items:center">
+                        <div id="disease-label" class="prediction-badge badge-healthy">System Ready</div>
+                        <div id="confidence-val" style="font-size:0.875rem; color:var(--text-muted)">Confidence: --</div>
+                    </div>
+                    <div class="upload-section">
+                        <label class="upload-label" for="manual-upload">
+                            <i data-lucide="upload" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                            Upload Custom Leaf
+                        </label>
+                        <input type="file" id="manual-upload" accept="image/*">
+                    </div>
+                </div>
+                
+                <h4 style="font-size:0.9rem; margin-top:1.5rem; margin-bottom:0.75rem; color:var(--text-muted)">Recent Captures</h4>
+                <div class="history-gallery" id="history-gallery">
+                    <!-- History items will be injected here -->
+                </div>
+            </div>
+
+            <div class="card col-4">
+                <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:1.5rem">Recent Alerts</h3>
+                <div id="alerts-list" style="display:flex; flex-direction:column; gap:1rem">
+                    <div style="color:var(--text-muted); font-size:0.875rem; text-align:center; padding:2rem">
+                        No recent threats detected.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="card col-12">
+                <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:1.5rem">Historical Trends</h3>
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:8000"; // Update if hosted
+        
+
+        // Chart.js Setup
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const mainChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: [], datasets: [
+                { label: 'Temperature (°C)', borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true },
+                { label: 'Humidity (%)', borderColor: '#4f46e5', backgroundColor: 'rgba(79, 70, 229, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true },
+                { label: 'Moisture (%)', borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true }
+            ]},
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                },
+                plugins: { legend: { labels: { color: '#f8fafc' } } }
+            }
+        });
+        // Initialize UI
+        function initUI() {
+            lucide.createIcons();
+            updateDashboard();
+            if (!window.dashboardInterval) {
+                window.dashboardInterval = setInterval(updateDashboard, 10000);
+            }
+        }
+
+        async function updateDashboard() {
+            try {
+                // Fetch Latest
+                const latestRes = await fetch(`${API_BASE}/api/latest`);
+                const latest = await latestRes.json();
+
+                if (latest && !latest.message) {
+                    if(latest.temperature !== undefined) document.getElementById('temp-val').innerHTML = `${latest.temperature}<span class="metric-unit">°C</span>`;
+                    if(latest.humidity !== undefined) document.getElementById('hum-val').innerHTML = `${latest.humidity}<span class="metric-unit">%</span>`;
+                    if(latest.moisture !== undefined) document.getElementById('moist-val').innerHTML = `${latest.moisture}<span class="metric-unit">%</span>`;
+                    
+                    document.getElementById('leaf-img').src = `${API_BASE}${latest.image_url}`;
+                    document.getElementById('capture-time').innerText = `Last updated: ${new Date(latest.timestamp).toLocaleTimeString()}`;
+                    
+                    const pred = latest.prediction;
+                    if(pred) {
+                        const badge = document.getElementById('disease-label');
+                        badge.innerText = pred.disease;
+                        badge.className = `prediction-badge ${pred.disease === 'Healthy' ? 'badge-healthy' : 'badge-danger'}`;
+                        document.getElementById('pred-badge-overlay').innerText = pred.disease;
+                        document.getElementById('confidence-val').innerText = `Confidence: ${(pred.confidence * 100).toFixed(1)}%`;
+                    }
+                }
+
+                // Fetch History for Chart & Alerts
+                const historyRes = await fetch(`${API_BASE}/api/telemetry?limit=10`);
+                const history = await historyRes.json();
+                
+                if (history && history.length > 0) {
+                    const sorted = [...history].reverse();
+                    
+                    // Filter out manual uploads for the environment chart
+                    const envData = sorted.filter(d => !d.is_manual);
+                    
+                    mainChart.data.labels = envData.map(d => new Date(d.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+                    mainChart.data.datasets[0].data = envData.map(d => d.temperature);
+                    mainChart.data.datasets[1].data = envData.map(d => d.humidity);
+                    mainChart.data.datasets[2].data = envData.map(d => d.moisture);
+                    mainChart.update('none');
+                    
+                    // Update image history gallery
+                    const gallery = document.getElementById('history-gallery');
+                    gallery.innerHTML = '';
+                    history.slice(0, 5).forEach(item => {
+                        const isHealthy = item.prediction?.disease === 'Healthy';
+                        gallery.innerHTML += `
+                            <div class="history-item">
+                                <img src="${API_BASE}${item.image_url}" alt="History item">
+                                <div class="prediction-badge ${isHealthy ? 'badge-healthy' : 'badge-danger'} badge" style="position: absolute;">
+                                    ${item.prediction?.disease || 'Unknown'}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    // Update Alerts
+                    const alertsList = document.getElementById('alerts-list');
+                    let alertsHtml = '';
+                    history.slice(0, 5).forEach(item => {
+                        if (item.prediction && item.prediction.disease !== 'Healthy') {
+                            alertsHtml += `
+                                <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 0.5rem;">
+                                    <div style="font-weight: 600; font-size: 0.875rem; color: #ef4444;">Disease Detected: ${item.prediction.disease}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                        ${new Date(item.timestamp).toLocaleString()}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    if (alertsHtml) alertsList.innerHTML = alertsHtml;
+                }
+
+            } catch (err) {
+                console.error("Dashboard update failed:", err);
+            }
+        }
+
+
+        // Manual Upload Handler
+        document.getElementById('manual-upload').addEventListener('change', async (e) => {
+            if (!e.target.files.length) return;
+            const file = e.target.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            document.getElementById('pred-badge-overlay').innerText = 'Analyzing Image...';
+            
+            try {
+                const res = await fetch(`${API_BASE}/upload_manual`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (res.ok) {
+                    updateDashboard();
+                } else {
+                    alert('Upload failed');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Initialize
+        initUI();
+    </script>
+</body>
+</html>
