@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Arecanut IoT Monitoring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --bg-overlay: rgba(15, 23, 42, 0.75);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #064e3b;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('arecanut_plantation_background_1778031096233.png') no-repeat center center/cover;
+            opacity: 0.4; /* Lowered opacity as requested */
+            z-index: 0;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.4), rgba(15, 23, 42, 0.6));
+            z-index: 1;
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 450px;
+            padding: 2.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            background: linear-gradient(to right, #10b981, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            color: white;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .toggle-view {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .toggle-view span {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .toggle-view span:hover {
+            text-decoration: underline;
+        }
+
+        #error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="login-card">
+        <div class="logo-area">
+            <div class="logo">ARECAMONITOR</div>
+            <p class="tagline" id="form-tagline">Secure IoT Disease Surveillance</p>
+        </div>
+
+        <div id="error-msg"></div>
+
+        <form id="auth-form">
+            <div class="form-group" id="name-group" style="display: none;">
+                <label for="name">Full Name</label>
+                <div class="input-wrapper">
+                    <i data-lucide="user"></i>
+                    <input type="text" id="name" placeholder="John Doe">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <i data-lucide="mail"></i>
+                    <input type="email" id="email" placeholder="farmer@plantation.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="lock"></i>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="submit-btn">
+                <span id="btn-text">Authenticate</span>
+                <div class="loading-spinner" id="btn-spinner"></div>
+            </button>
+        </form>
+
+        <p class="toggle-view" id="toggle-view">
+            Don't have an account? <span onclick="toggleAuth()">Register Now</span>
+        </p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const API_BASE = "http://localhost:8000";
+        let isLogin = true;
+
+        function toggleAuth() {
+            isLogin = !isLogin;
+            const nameGroup = document.getElementById('name-group');
+            const tagline = document.getElementById('form-tagline');
+            const submitBtn = document.getElementById('btn-text');
+            const toggleView = document.getElementById('toggle-view');
+
+            if (isLogin) {
+                nameGroup.style.display = 'none';
+                tagline.innerText = 'Secure IoT Disease Surveillance';
+                submitBtn.innerText = 'Authenticate';
+                toggleView.innerHTML = `Don't have an account? <span onclick="toggleAuth()">Register Now</span>`;
+            } else {
+                nameGroup.style.display = 'block';
+                tagline.innerText = 'Join the Intelligent Farming Network';
+                submitBtn.innerText = 'Create Account';
+                toggleView.innerHTML = `Already have an account? <span onclick="toggleAuth()">Login instead</span>`;
+            }
+        }
+
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const errorMsg = document.getElementById('error-msg');
+            const btnText = document.getElementById('btn-text');
+            const spinner = document.getElementById('btn-spinner');
+
+            errorMsg.style.display = 'none';
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+
+            const endpoint = isLogin ? '/login' : '/register';
+            const body = isLogin ? { email, password } : { email, password, name };
+
+            try {
+                const res = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    if (isLogin) {
+                        localStorage.setItem('areca_token', data.access_token);
+                        localStorage.setItem('areca_user_name', data.name);
+                        window.location.href = 'index.html';
+                    } else {
+                        // Switch to login after registration
+                        alert("Registration successful! Please login.");
+                        toggleAuth();
+                        spinner.style.display = 'none';
+                        btnText.style.display = 'block';
+                    }
+                } else {
+                    errorMsg.innerText = data.detail || "Authentication failed";
+                    errorMsg.style.display = 'block';
+                    spinner.style.display = 'none';
+                    btnText.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.innerText = "Connection error. Is the backend running?";
+                errorMsg.style.display = 'block';
+                spinner.style.display = 'none';
+                btnText.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

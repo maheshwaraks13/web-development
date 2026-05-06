@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,51 +12,157 @@
     <style>
         /* Modals and New UI Elements */
         .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(5px);
-            z-index: 1000; justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
+
         .modal-content {
-            background: var(--bg-card); padding: 2rem; border-radius: 1.5rem;
-            border: 1px solid var(--glass-border); width: 100%; max-width: 400px;
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 400px;
         }
-        .modal-content h2 { margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted); }
-        .form-group input { 
-            width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--glass-border);
-            background: rgba(15, 23, 42, 0.5); color: var(--text-main);
+
+        .modal-content h2 {
+            margin-bottom: 1.5rem;
         }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--glass-border);
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--text-main);
+        }
+
         .btn {
-            width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: none;
-            background: var(--primary); color: white; font-weight: 600; cursor: pointer;
-            transition: background 0.2s; margin-top: 1rem;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 1rem;
         }
-        .btn:hover { background: var(--primary-hover); }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: rgba(79, 70, 229, 0.1); }
-        .header-actions { display: flex; gap: 1rem; align-items: center; }
-        .toggle-link { color: var(--primary); cursor: pointer; font-size: 0.875rem; margin-top: 1rem; display: block; text-align: center; }
-        .hidden { display: none !important; }
-        
-        .upload-section { margin-top: 1rem; display: flex; gap: 0.5rem; }
-        .upload-section input[type="file"] { display: none; }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .toggle-link {
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            display: block;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .upload-section {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .upload-section input[type="file"] {
+            display: none;
+        }
+
         .upload-label {
-            padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px dashed var(--glass-border);
-            cursor: pointer; font-size: 0.875rem; color: var(--text-muted); flex-grow: 1; text-align: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px dashed var(--glass-border);
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            flex-grow: 1;
+            text-align: center;
             transition: all 0.2s;
         }
-        .upload-label:hover { border-color: var(--primary); color: var(--text-main); }
-        
-        .history-gallery { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
-        .history-item { 
-            min-width: 120px; height: 90px; border-radius: 0.5rem; overflow: hidden; 
-            border: 1px solid var(--glass-border); position: relative;
+
+        .upload-label:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
         }
-        .history-item img { width: 100%; height: 100%; object-fit: cover; }
-        .history-item .badge { position: absolute; bottom: 0.25rem; right: 0.25rem; font-size: 0.6rem; padding: 0.2rem 0.4rem; }
+
+        .history-gallery {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
+
+        .history-item {
+            min-width: 120px;
+            height: 90px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .history-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .history-item .badge {
+            position: absolute;
+            bottom: 0.25rem;
+            right: 0.25rem;
+            font-size: 0.6rem;
+            padding: 0.2rem 0.4rem;
+        }
     </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <header>
@@ -65,7 +172,13 @@
                     <div class="status-dot"></div>
                     <span id="system-status">System Active</span>
                 </div>
-
+                <div id="user-profile" style="display: flex; align-items: center; gap: 1rem; margin-left: 1rem; border-left: 1px solid var(--glass-border); padding-left: 1rem;">
+                    <span id="user-name" style="font-weight: 600; font-size: 0.875rem;">User</span>
+                    <button class="btn btn-outline" onclick="handleLogout()" style="margin-top: 0; padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 0.5rem;">
+                        <i data-lucide="log-out" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;"></i>
+                        Logout
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -94,13 +207,15 @@
                     <span id="capture-time" style="color:var(--text-muted); font-size:0.875rem">Last updated: --</span>
                 </div>
                 <div class="image-preview">
-                    <img id="leaf-img" src="https://via.placeholder.com/800x600?text=No+Image+Captured" alt="Arecanut Leaf">
+                    <img id="leaf-img" src="https://via.placeholder.com/800x600?text=No+Image+Captured"
+                        alt="Arecanut Leaf">
                     <div class="prediction-overlay" id="pred-badge-overlay">Initializing AI...</div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center">
                     <div style="display:flex; gap:1rem; align-items:center">
                         <div id="disease-label" class="prediction-badge badge-healthy">System Ready</div>
-                        <div id="confidence-val" style="font-size:0.875rem; color:var(--text-muted)">Confidence: --</div>
+                        <div id="confidence-val" style="font-size:0.875rem; color:var(--text-muted)">Confidence: --
+                        </div>
                     </div>
                     <div class="upload-section">
                         <label class="upload-label" for="manual-upload">
@@ -110,8 +225,9 @@
                         <input type="file" id="manual-upload" accept="image/*">
                     </div>
                 </div>
-                
-                <h4 style="font-size:0.9rem; margin-top:1.5rem; margin-bottom:0.75rem; color:var(--text-muted)">Recent Captures</h4>
+
+                <h4 style="font-size:0.9rem; margin-top:1.5rem; margin-bottom:0.75rem; color:var(--text-muted)">Recent
+                    Captures</h4>
                 <div class="history-gallery" id="history-gallery">
                     <!-- History items will be injected here -->
                 </div>
@@ -138,17 +254,19 @@
 
     <script>
         const API_BASE = "http://localhost:8000"; // Update if hosted
-        
+
 
         // Chart.js Setup
         const ctx = document.getElementById('mainChart').getContext('2d');
         const mainChart = new Chart(ctx, {
             type: 'line',
-            data: { labels: [], datasets: [
-                { label: 'Temperature (°C)', borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true },
-                { label: 'Humidity (%)', borderColor: '#4f46e5', backgroundColor: 'rgba(79, 70, 229, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true },
-                { label: 'Moisture (%)', borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true }
-            ]},
+            data: {
+                labels: [], datasets: [
+                    { label: 'Temperature (°C)', borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true },
+                    { label: 'Humidity (%)', borderColor: '#4f46e5', backgroundColor: 'rgba(79, 70, 229, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true },
+                    { label: 'Moisture (%)', borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', data: [], borderWidth: 2, tension: 0.4, fill: true }
+                ]
+            },
             options: {
                 responsive: true, maintainAspectRatio: false,
                 scales: {
@@ -161,28 +279,52 @@
         // Initialize UI
         function initUI() {
             lucide.createIcons();
+            if (!checkAuth()) return;
+            
+            const userName = localStorage.getItem('areca_user_name');
+            if (userName) document.getElementById('user-name').innerText = userName;
+
             updateDashboard();
             if (!window.dashboardInterval) {
                 window.dashboardInterval = setInterval(updateDashboard, 10000);
             }
         }
 
+        function checkAuth() {
+            const token = localStorage.getItem('areca_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('areca_token');
+            localStorage.removeItem('areca_user_name');
+            window.location.href = 'login.html';
+        }
+
         async function updateDashboard() {
+            const token = localStorage.getItem('areca_token');
             try {
                 // Fetch Latest
-                const latestRes = await fetch(`${API_BASE}/api/latest`);
+                const latestRes = await fetch(`${API_BASE}/api/latest`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (latestRes.status === 401) return handleLogout();
                 const latest = await latestRes.json();
 
                 if (latest && !latest.message) {
-                    if(latest.temperature !== undefined) document.getElementById('temp-val').innerHTML = `${latest.temperature}<span class="metric-unit">°C</span>`;
-                    if(latest.humidity !== undefined) document.getElementById('hum-val').innerHTML = `${latest.humidity}<span class="metric-unit">%</span>`;
-                    if(latest.moisture !== undefined) document.getElementById('moist-val').innerHTML = `${latest.moisture}<span class="metric-unit">%</span>`;
-                    
+                    if (latest.temperature !== undefined) document.getElementById('temp-val').innerHTML = `${latest.temperature}<span class="metric-unit">°C</span>`;
+                    if (latest.humidity !== undefined) document.getElementById('hum-val').innerHTML = `${latest.humidity}<span class="metric-unit">%</span>`;
+                    if (latest.moisture !== undefined) document.getElementById('moist-val').innerHTML = `${latest.moisture}<span class="metric-unit">%</span>`;
+
                     document.getElementById('leaf-img').src = `${API_BASE}${latest.image_url}`;
                     document.getElementById('capture-time').innerText = `Last updated: ${new Date(latest.timestamp).toLocaleTimeString()}`;
-                    
+
                     const pred = latest.prediction;
-                    if(pred) {
+                    if (pred) {
                         const badge = document.getElementById('disease-label');
                         badge.innerText = pred.disease;
                         badge.className = `prediction-badge ${pred.disease === 'Healthy' ? 'badge-healthy' : 'badge-danger'}`;
@@ -192,21 +334,23 @@
                 }
 
                 // Fetch History for Chart & Alerts
-                const historyRes = await fetch(`${API_BASE}/api/telemetry?limit=10`);
+                const historyRes = await fetch(`${API_BASE}/api/telemetry?limit=10`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 const history = await historyRes.json();
-                
+
                 if (history && history.length > 0) {
                     const sorted = [...history].reverse();
-                    
+
                     // Filter out manual uploads for the environment chart
                     const envData = sorted.filter(d => !d.is_manual);
-                    
-                    mainChart.data.labels = envData.map(d => new Date(d.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+
+                    mainChart.data.labels = envData.map(d => new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
                     mainChart.data.datasets[0].data = envData.map(d => d.temperature);
                     mainChart.data.datasets[1].data = envData.map(d => d.humidity);
                     mainChart.data.datasets[2].data = envData.map(d => d.moisture);
                     mainChart.update('none');
-                    
+
                     // Update image history gallery
                     const gallery = document.getElementById('history-gallery');
                     gallery.innerHTML = '';
@@ -252,16 +396,19 @@
             const file = e.target.files[0];
             const formData = new FormData();
             formData.append('image', file);
-            
+
             document.getElementById('pred-badge-overlay').innerText = 'Analyzing Image...';
-            
+
             try {
                 const res = await fetch(`${API_BASE}/upload_manual`, {
                     method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
                     body: formData
                 });
                 if (res.ok) {
                     updateDashboard();
+                } else if (res.status === 401) {
+                    handleLogout();
                 } else {
                     alert('Upload failed');
                 }
@@ -274,4 +421,5 @@
         initUI();
     </script>
 </body>
+
 </html>

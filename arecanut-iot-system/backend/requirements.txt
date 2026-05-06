@@ -2,13 +2,14 @@ fastapi
 uvicorn
 python-multipart
 motor
-motor-asyncio
 pymongo
-opencv-python
-tensorflow-cpu
+opencv-python-headless
 numpy
 pillow
 pydantic
 python-dotenv
 aiofiles
 google-generativeai
+passlib
+bcrypt
+pyjwt
